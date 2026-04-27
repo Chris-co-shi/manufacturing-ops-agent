@@ -1,0 +1,20 @@
+{
+  "MAT-AL-001": {
+    "material_code": "MAT-AL-001",
+    "material_name": "铝壳原料",
+    "total_qty": 120.0000,
+    "frozen_qty": 30.0000,
+    "available_qty": 90.0000,
+    "unit": "KG",
+    "last_sync_status": "FAILED"
+  },
+  "MAT-LI-002": {
+    "material_code": "MAT-LI-002",
+    "material_name": "锂盐原料",
+    "total_qty": 300.0000,
+    "frozen_qty": 20.0000,
+    "available_qty": 280.0000,
+    "unit": "KG",
+    "last_sync_status": "SUCCESS"
+  }
+}

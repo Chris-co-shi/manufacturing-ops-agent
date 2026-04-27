@@ -1,0 +1,16 @@
+{
+  "DEV-MIX-001": {
+    "device_id": "DEV-MIX-001",
+    "device_name": "混料设备001",
+    "status": "WARNING",
+    "last_alarm": "AGV入库回传延迟",
+    "can_continue": false
+  },
+  "DEV-MIX-002": {
+    "device_id": "DEV-MIX-002",
+    "device_name": "灌装设备002",
+    "status": "NORMAL",
+    "last_alarm": "无",
+    "can_continue": true
+  }
+}

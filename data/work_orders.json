@@ -1,0 +1,18 @@
+{
+  "WO-001": {
+    "order_id": "WO-001",
+    "status": "RUNNING",
+    "material_code": "MAT-AL-001",
+    "device_id": "DEV-MIX-001",
+    "current_issue": "投料扣减失败",
+    "priority": "HIGH"
+  },
+  "WO-002": {
+    "order_id": "WO-002",
+    "status": "PENDING",
+    "material_code": "MAT-AL-002",
+    "device_id": "DEV-FILL-002",
+    "current_issue": "无",
+    "priority": "MEDIUM"
+  }
+}
