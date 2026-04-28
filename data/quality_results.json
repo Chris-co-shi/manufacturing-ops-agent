@@ -1,0 +1,16 @@
+{
+  "WO-001": {
+    "order_id": "WO-001",
+    "inspection_status": "PENDING",
+    "latest_result": "未完成",
+    "risk_level": "MEDIUM",
+    "remark": "当前工单仍处于投料异常阶段，质检尚未完成"
+  },
+  "WO-002": {
+    "order_id": "WO-002",
+    "inspection_status": "PASSED",
+    "latest_result": "合格",
+    "risk_level": "LOW",
+    "remark": "最近一次质检结果正常"
+  }
+}

@@ -1,12 +1,11 @@
 import json
 from pathlib import Path
 
-DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "inventory.json"
+from app.utils.json_utils import JsonUtils
 
 
 def get_inventory(material_code: str):
-    with open(DATA_PATH, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    data = JsonUtils(base_url="data", file_name="inventory.json").load_json()
     inventory = data.get(material_code)
 
     if inventory is None:

@@ -6,7 +6,7 @@ from typing import Callable, Dict, Any, TypedDict
 class ToolParameter:
     name: str
     type: str
-    required: bool
+    required: bool = True
     description: str = ""
 
 
@@ -23,11 +23,13 @@ class ToolDefinition:
 注册工具、获取工具、工具列表
 管理工具
 """
+
+
 class ToolRegistry:
     def __init__(self):
         self._tools: Dict[str, ToolDefinition] = {}
 
-    def registry(self, tool: ToolDefinition):
+    def register(self, tool: ToolDefinition):
         if tool.name in self._tools:
             raise ValueError(f"Tool {tool.name} already exists")
         self._tools[tool.name] = tool

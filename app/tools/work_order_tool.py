@@ -1,13 +1,8 @@
-import json
-from pathlib import Path
-
-DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "work_orders.json"
+from app.utils.json_utils import JsonUtils
 
 
-def get_work_orders(order_id: str):
-    with open(DATA_PATH, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
+def get_work_order(order_id: str):
+    data = JsonUtils(base_url="data", file_name="work_orders.json").load_json()
     order = data.get(order_id)
     if order is None:
         return {
