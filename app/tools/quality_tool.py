@@ -9,7 +9,7 @@ def get_quality_result(order_id: str):
     if result is None:
         return {
             "found": False,
-            "message": f"未找到工单质检结果: {order_id}",
+            "messages": f"未找到工单质检结果: {order_id}",
         }
 
     return {

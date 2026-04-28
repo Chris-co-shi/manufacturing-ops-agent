@@ -8,7 +8,7 @@ def get_sap_sync_status(material_code: str):
     if result is None:
         return {
             "found": False,
-            "message": f"未找到 SAP 同步状态: {material_code}",
+            "messages": f"未找到 SAP 同步状态: {material_code}",
         }
 
     return {

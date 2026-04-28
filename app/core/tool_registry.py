@@ -82,7 +82,7 @@ class ToolRegistry:
                 "success": True,
                 "result": result(**kwargs)
             }
-        except AttributeError as e:
+        except Exception as e:
             return {
                 "tool": name,
                 "success": False,
