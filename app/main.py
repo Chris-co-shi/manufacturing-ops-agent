@@ -1,38 +1,40 @@
 import sys
 
 from app.agent.executor import ManufacturingOpsAgent
+from app.agent.graph import ManufacturingOpsGraph
 
 
-def main(text: str = ""):
-    agent = ManufacturingOpsAgent()
-
-    if len(sys.argv) >= 2 and sys.argv[1] == "--tools":
-        tools = agent.list_tools()
-
-        print("## Registered Tools")
-        for tool in tools:
-            print(f"- {tool['name']}: {tool['description']}")
-
-        return
-
-    # if len(sys.argv) < 2:
-    #     print("用法：")
-    #     print("  python -m app.main \"查询工单 WO-001 的状态\"")
-    #     print("  python -m app.main \"工单 WO-001 投料失败，请分析原因\"")
-    #     print("  python -m app.main --tools")
-    #     return
-
-    user_input = text or sys.argv[1]
-
-    result = agent.run(user_input)
-
-    print("Intent:", result["intent"])
+def print_result(result: dict):
+    print("Intent:", result.get("intent"))
     print("Confidence:", result.get("confidence"))
     print("Reason:", result.get("reason"))
-    print("Tools Used:", result["tools_used"])
+    print("Tools Used:", result.get("tools_used", []))
     print()
-    print(result["answer"])
+    print(result.get("answer"))
 
 
-if __name__ == '__main__':
-    main("")
+def main():
+    if len(sys.argv) < 2:
+        print("用法：")
+        print("  python -m app.main \"查询工单 WO-001 的状态\"")
+        print("  python -m app.main --graph \"查询工单 WO-001 的状态\"")
+        print("  python -m app.main --graph \"工单 WO-001 投料失败，请分析原因\"")
+        return
+
+    if sys.argv[1] == "--graph":
+        if len(sys.argv) < 3:
+            print("用法：python -m app.main --graph \"工单 WO-001 投料失败，请分析原因\"")
+            return
+
+        agent = ManufacturingOpsGraph()
+        result = agent.run(sys.argv[2])
+        print_result(result)
+        return
+
+    agent = ManufacturingOpsAgent()
+    result = agent.run(sys.argv[1])
+    print_result(result)
+
+
+if __name__ == "__main__":
+    main()
