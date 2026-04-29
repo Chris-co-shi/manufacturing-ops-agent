@@ -1,5 +1,7 @@
 from app.agent.intent_router import IntentRouter
 from app.core.tool_registry import ToolDefinition, ToolParameter, ToolRegistry
+from app.rag.document import DocumentChunk
+from app.rag.retriever import KeywordRetriever
 from app.tools.work_order_tool import get_work_order
 from app.tools.inventory_tool import get_inventory
 from app.tools.device_tool import get_device_status
@@ -10,11 +12,13 @@ from app.tools.action_plan_tool import create_action_plan
 
 def _build_exception_analysis_answer(
         work_order: dict,
-    inventory: dict | None,
-    device: dict | None,
-    quality_result: dict | None,
-    sap_sync: dict | None,
-    action_plan: dict,
+        inventory: dict | None,
+        device: dict | None,
+        quality_result: dict | None,
+        sap_sync: dict | None,
+        action_plan: dict,
+        retrieved_chunks: list[DocumentChunk],
+
 ):
     lines = ["## 工单异常分析结果", "", f"工单号: {work_order['order_id']}", f"工单状态: {work_order['status']}",
              f"当前异常: {work_order['current_issue']}", f"优先级: {work_order['priority']}", ""]
@@ -72,6 +76,8 @@ def _build_exception_analysis_answer(
     if quality_result and quality_result.get("inspection_status") == "PENDING":
         lines.append("- 质检尚未完成，恢复生产前需要确认质量风险。")
 
+
+
     if inventory:
         total_qty = inventory.get("total_qty", 0)
         available_qty = inventory.get("available_qty", 0)
@@ -88,6 +94,12 @@ def _build_exception_analysis_answer(
     for index, action in enumerate(action_plan["actions"], start=1):
         lines.append(f"{index}. {action}")
 
+    lines.append("")
+    lines.append("## 知识库依据")
+
+    for index, chunk in enumerate(retrieved_chunks, start=1):
+        lines.append(f"{index}. 来源: {chunk.source}，匹配分数: {chunk.score}")
+        lines.append(f"   摘要: {chunk.content[:120]}...")
     return "\n".join(lines)
 
 
@@ -104,6 +116,7 @@ class ManufacturingOpsAgent:
         self.registry = ToolRegistry()
         self.router = IntentRouter()
         self._register_tools()
+        self.retriever = KeywordRetriever()
 
     def _register_tools(self):
         self.registry.register(
@@ -329,6 +342,10 @@ class ManufacturingOpsAgent:
 
         action_plan = action_plan_result["result"]["data"]
 
+        retrieved_chunks = self.retriever.retrieve(
+            query=f"{work_order['current_issue']} {work_order['material_code']} {work_order['device_id']}",
+            top_k=3,
+        )
         return {
             "intent": intent_result.intent,
             "confidence": intent_result.confidence,
@@ -347,6 +364,7 @@ class ManufacturingOpsAgent:
                 quality_result=quality_result,
                 sap_sync=sap_sync,
                 action_plan=action_plan,
+                retrieved_chunks=retrieved_chunks,
             ),
         }
 
@@ -363,4 +381,3 @@ class ManufacturingOpsAgent:
             return None
 
         return result.get("data")
-
