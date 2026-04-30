@@ -5,46 +5,34 @@ from mypy_extensions import TypedDict
 
 class ManufacturingAgentState(TypedDict, total=False):
     """
-    定义整张图流转时共享的数据结构。 可以理解成AgentExecutionContext 执行器的上下文
-    """
-    # 用户输入
+        Agent Graph 运行时共享状态。
+        它不是业务实体，而是一次 Agent 执行过程中的上下文载体。
+        """
+
+    # 会话标识，用于隔离不同用户/不同会话的 Memory
+    session_id: str
+
+    # 用户原始输入
     user_input: str
 
-    # 意图
+    # 经过 Memory 补全后的输入
+    # 例如：用户输入“继续分析刚才那个工单”
+    # Memory 可以补全为“继续分析刚才那个工单 WO-001”
+    effective_user_input: str
+
+    # Memory 上下文
+    memory_context: list[dict[str, Any]]
+
+    # 意图识别结果
     intent: str
-
-    # 工单ID
     order_id: str | None
-
-    # 置信度
     confidence: float
+    reason: str
 
-    # 原因
-    reason: str = ""
-
-    # 工具使用
-    tools_used: list[str]
-
-    # 错误
-    errors: list[str]
-
-    # 工单信息
-    # work_order: dict[str, Any] | None
-    #
-    # # 库存信息
-    # inventory: dict[str, Any] | None
-    #
-    # # 设备信息
-    # device: dict[str, Any] | None
-    #
-    # quality_result: dict[str, Any] | None
-    #
-    # sap_sync: dict[str, Any] | None
-    #
-    # action_plan: dict[str, Any] | None
-    #
-    # retriever: list[dict[str, Any]]
-
+    # 执行结果
     result: dict[str, Any] | None
-
+    tools_used: list[str]
     answer: str
+
+    # 错误信息
+    errors: list[str]
