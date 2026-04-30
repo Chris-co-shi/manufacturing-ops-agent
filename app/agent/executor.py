@@ -1,4 +1,4 @@
-from app.agent.intent_router import IntentRouter
+from app.core.intent_router import IntentRouter
 from app.core.tool_registry import ToolDefinition, ToolParameter, ToolRegistry
 from app.rag.document import DocumentChunk
 from app.rag.retriever import KeywordRetriever

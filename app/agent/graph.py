@@ -4,7 +4,7 @@ from langgraph.constants import START, END
 from langgraph.graph import StateGraph
 
 from app.agent.executor import ManufacturingOpsAgent
-from app.agent.intent_router import IntentRouter
+from app.core.intent_router import IntentRouter
 from app.agent.state import ManufacturingAgentState
 
 class ManufacturingOpsGraph:
