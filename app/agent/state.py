@@ -1,13 +1,12 @@
-from typing import Any
-
-from mypy_extensions import TypedDict
+from typing import Any, TypedDict
 
 
 class ManufacturingAgentState(TypedDict, total=False):
     """
-        Agent Graph 运行时共享状态。
-        它不是业务实体，而是一次 Agent 执行过程中的上下文载体。
-        """
+    Agent Graph 运行时共享状态。
+
+    它不是业务实体，而是一次 Agent 执行过程中的上下文载体。
+    """
 
     # 会话标识，用于隔离不同用户/不同会话的 Memory
     session_id: str
@@ -29,14 +28,29 @@ class ManufacturingAgentState(TypedDict, total=False):
     confidence: float
     reason: str
 
-    # 执行结果
+    # Executor 原始结果
     result: dict[str, Any] | None
+
+    # 给 PromptBuilder / ResponseSynthesizer 使用的结构化工具上下文
+    tool_results: dict[str, Any]
+
+    # RAG 结构化上下文
+    rag_context: list[dict[str, Any]]
+
+    # 工具调用列表
     tools_used: list[str]
+
+    # Graph 执行轨迹
+    execution_trace: list[dict[str, Any]]
+
+    # Executor 原始回答
     answer: str
+
+    # PromptBuilder 生成的 prompt
+    prompt: str
+
+    # ResponseSynthesizer 生成的最终回答
+    final_answer: str
 
     # 错误信息
     errors: list[str]
-
-    prompt: str
-
-    final_answer: str
