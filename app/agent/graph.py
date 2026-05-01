@@ -4,6 +4,7 @@ from langgraph.constants import START, END
 from langgraph.graph import StateGraph
 
 from app.agent.executor import ManufacturingOpsAgent
+from app.agent.response_synthesizer import ResponseSynthesizer
 from app.core.intent_router import IntentRouter
 from app.agent.state import ManufacturingAgentState
 from app.memory.manager import MemoryManager
@@ -26,6 +27,7 @@ class ManufacturingOpsGraph:
         # 工具注册
         # 图初始化
         self.graph = self._build_graph()
+        self.response_synthesizer = ResponseSynthesizer()
         self.memory_manager = MemoryManager(JsonFileMemoryStore())
 
     def run(
@@ -51,6 +53,7 @@ class ManufacturingOpsGraph:
         builder.add_node("query_work_order", self.query_work_order_node)
         builder.add_node("analyze_exception", self.analyze_exception_node)
         builder.add_node("unknown", self.unknown_node)
+        builder.add_node("synthesize_response", self.synthesize_response_node)
         builder.add_node("save_memory", self.save_memory_node)
 
         builder.add_edge(START, "load_memory")
@@ -65,9 +68,10 @@ class ManufacturingOpsGraph:
             },
         )
 
-        builder.add_edge("query_work_order", "save_memory")
-        builder.add_edge("analyze_exception", "save_memory")
-        builder.add_edge("unknown", "save_memory")
+        builder.add_edge("query_work_order", "synthesize_response")
+        builder.add_edge("analyze_exception", "synthesize_response")
+        builder.add_edge("unknown", "synthesize_response")
+        builder.add_edge("synthesize_response", "save_memory")
         builder.add_edge("save_memory", END)
         return builder.compile()
 
@@ -225,3 +229,22 @@ class ManufacturingOpsGraph:
             return work_order.get("order_id")
 
         return None
+
+    def synthesize_response_node(self, state: ManufacturingAgentState) -> ManufacturingAgentState:
+        prompt = self.response_synthesizer.build_prompt(state)
+        final_answer = self.response_synthesizer.synthesize(state)
+
+        trace = state.get("execution_trace", [])
+        trace.append(
+            {
+                "step": "synthesize_response",
+                "description": "Generated structured business analysis response",
+            }
+        )
+
+        return {
+            **state,
+            "prompt": prompt,
+            "final_answer": final_answer,
+            "execution_trace": trace,
+        }

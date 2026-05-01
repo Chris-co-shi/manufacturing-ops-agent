@@ -36,3 +36,7 @@ class ManufacturingAgentState(TypedDict, total=False):
 
     # 错误信息
     errors: list[str]
+
+    prompt: str
+
+    final_answer: str
